@@ -621,7 +621,10 @@ ifeq ($(DEBUG), 1)
       CXXFLAGS += -O0 -g -DDEBUG
    endif
 else
-ifneq (,$(findstring msvc,$(platform)))
+ifeq ($(platform), emscripten)
+   CFLAGS += -O3 -DNDEBUG
+   CXXFLAGS += -O3 -DNDEBUG
+else ifneq (,$(findstring msvc,$(platform)))
    CFLAGS += -O2 -DNDEBUG
    CXXFLAGS += -O2 -DNDEBUG
 else

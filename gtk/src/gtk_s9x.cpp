@@ -25,6 +25,9 @@
 #include "gfx.h"
 #include "memmap.h"
 #include "ppu.h"
+#include "fmt/format.h"
+
+#include <iomanip>
 
 static void S9xThrottle(int);
 static void S9xCheckPointerTimer();
@@ -295,6 +298,8 @@ static bool S9xIdleFunc()
             S9xNPSendPause(true);
         }
 
+        top_level->window->queue_draw();
+
         /* Move to a timer-based function to use less CPU */
         Glib::signal_timeout().connect(sigc::ptr_fun(S9xPauseFunc), 8);
         return false;
@@ -349,7 +354,6 @@ static bool S9xScreenSaverCheckFunc()
 
     return true;
 }
-
 /* Snes9x core hooks */
 void S9xMessage(int type, int number, const char *message)
 {
@@ -358,6 +362,11 @@ void S9xMessage(int type, int number, const char *message)
     case S9X_MOVIE_INFO:
         S9xSetInfoString(message);
         break;
+    case S9X_ROM_INFO:
+    {
+        S9xSetInfoString(Memory.GetMultilineROMInfo().c_str());
+        break;
+    }
     default:
         break;
     }

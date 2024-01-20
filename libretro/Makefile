@@ -1,6 +1,7 @@
 DEBUG = 0
 HAVE_EXCEPTIONS = 0
 HAVE_STRINGS_H = 1
+EMULATORJS_THREADS ?= 0
 
 LTO ?= -flto
 SPACE :=
@@ -360,6 +361,11 @@ else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
    STATIC_LINKING=1
    STATIC_LINKING_LINK=1
+	ifeq ($(EMULATORJS_THREADS), 1)
+		LDFLAGS += -pthread
+		CFLAGS += -pthread
+		CXXFLAGS += -pthread
+	endif
 
 # Windows MSVC 2003 Xbox 1
 else ifeq ($(platform), xbox1_msvc2003)
